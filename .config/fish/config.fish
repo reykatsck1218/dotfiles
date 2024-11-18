@@ -25,6 +25,15 @@ set -gx FZF_DEFAULT_OPTS "--height 100%"
 # for zoxide interactive
 alias zx zi
 alias zz "z -"
+alias ssh-lumen "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@34.209.32.91"
+alias ssh-google "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@54.244.165.151"
+alias ssh-wpdeep "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@54.218.125.173"
+alias ssh-pmapi "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@100.21.139.132"
+alias ssh-devdeep "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@100.20.225.140"
+alias ssh-devdeep "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@100.20.225.140"
+alias ssh-rankdb "ssh -i ~/Documents/projects/deepci/deepci-scraper-kp.pem ubuntu@44.232.201.204"
+alias ssh-google-hetzner "ssh root@google-scraper.hetzner.deepci.com"
+alias ssh-lumen-hetzner "ssh root@rey-scraper.hetzner.deepci.com"
 
 # Replace cat with batcat
 alias cat "bat --plain"

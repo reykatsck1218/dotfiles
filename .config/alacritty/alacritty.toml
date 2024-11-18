@@ -2,6 +2,8 @@ import = [
     "~/.config/alacritty/theme.toml",
 ]
 
+shell = "/opt/homebrew/bin/fish"
+
 [env]
 TERM = "xterm-256color"
 
@@ -9,7 +11,7 @@ TERM = "xterm-256color"
 size = 14
 
 [font.normal]
-family = "Hack Nerd Font Mono"
+family = "Menlo"
 
 [window]
 padding = { x = 15, y = 15 }
