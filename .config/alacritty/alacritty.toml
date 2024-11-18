@@ -1,5 +1,5 @@
 # What shell to use?
-#shell = "fish"
+shell = "/opt/homebrew/bin/fish"
 
 # TokyoNight Alacritty Colors
 # Default colors
