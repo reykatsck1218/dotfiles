@@ -3,9 +3,13 @@
 set fish_greeting
 
 # Set some stuff for out path
-fish_add_path -g ~/.local/bin
 fish_add_path -g ~/.cargo/bin
+fish_add_path -g ~/.files/bin
+fish_add_path -g ~/.local/bin
+fish_add_path -g ~/.config/composer/vendor/bin
 fish_add_path -g /opt/homebrew/bin
+fish_add_path -g /opt/homebrew/opt/m4/bin
+fish_add_path -g /opt/homebrew/opt/llvm/bin
 
 # Set default editor to vim
 set -gx EDITOR nvim
@@ -13,18 +17,43 @@ set -gx EDITOR nvim
 # Disable MANGOHUD by default
 set -gx MANGOHUD 0
 
+# Set JOSBS
+set -gx JOBS "$(nproc)"
+
 # Add makeflags
-set -gx MAKEFLAGS "-j$(nproc)"
+set -gx MAKEFLAGS "-j$JOBS"
 
-# Setup our default FZF command
-set -gx FZF_DEFAULT_COMMAND "rg --files --hidden -g '!.git'"
-set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
+# Set paru pager
+set -gx PARU_PAGER "bat --color=always"
+
+# FZF theme
 set -gx FZF_CTRL_T_OPTS "--preview 'bat -n --color=always {}'"
-set -gx FZF_DEFAULT_OPTS "--height 100%"
+set -gx FZF_DEFAULT_OPTS "$FZF_DEFAULT_OPTS \
+    --height 100%
+    --highlight-line \
+    --info=inline-right \
+    --ansi \
+    --layout=reverse \
+    --border=none
+    --color=bg+:#283457 \
+    --color=bg:#16161e \
+    --color=border:#27a1b9 \
+    --color=fg:#c0caf5 \
+    --color=gutter:#16161e \
+    --color=header:#ff9e64 \
+    --color=hl+:#2ac3de \
+    --color=hl:#2ac3de \
+    --color=info:#545c7e \
+    --color=marker:#ff007c \
+    --color=pointer:#ff007c \
+    --color=prompt:#2ac3de \
+    --color=query:#c0caf5:regular \
+    --color=scrollbar:#27a1b9 \
+    --color=separator:#ff9e64 \
+    --color=spinner:#ff007c \
+    "
 
-# for zoxide interactive
-alias zx zi
-alias zz "z -"
+# SSH shortcuts
 alias ssh-lumen "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@34.209.32.91"
 alias ssh-google "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@54.244.165.151"
 alias ssh-wpdeep "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@54.218.125.173"
@@ -35,9 +64,48 @@ alias ssh-rankdb "ssh -i ~/Documents/projects/deepci/deepci-scraper-kp.pem ubunt
 alias ssh-google-hetzner "ssh root@google-scraper.hetzner.deepci.com"
 alias ssh-lumen-hetzner "ssh root@rey-scraper.hetzner.deepci.com"
 
+# Check for batcat
+if command -v batcat >/dev/null
+    alias bat batcat
+end
+
+# Check for exa and alias to eza
+if command -v exa >/dev/null
+    alias eza exa
+end
+
 # Replace cat with batcat
 alias cat "bat --plain"
 alias less cat
+
+# Alias for cmatrix
+alias c cmatrix
+
+# Replace diff command with a more usefull git command
+function diff
+    git diff --name-only --relative --diff-filter=d | xargs bat --diff
+end
+
+# Git typo
+function got
+    echo "Hey! Fat fingers!!!"
+    git $argv
+end
+
+# More git
+alias gti got
+alias gto got
+alias tgi got
+alias gut got
+alias fur got
+alias hot got
+
+# fastfetch
+alias f fastfetch
+alias ff fastfetch
+
+# Alias for lazygit
+alias lg lazygit
 
 # Replace man with command for colorfull man calls
 function man
@@ -48,6 +116,13 @@ end
 function help
     $argv --help 2>&1 | bat --plain --language=help
 end
+
+# Alias for quick and dirty git commit
+alias g 'git commit -am "$(quoty)"; git pull; git push'
+alias gg 'git add . && git commit -m "$(quoty)"; git pull; git push'
+
+# Alias for kweri
+alias q kweri
 
 # Add navcoin alias
 alias nav navcoin-cli
@@ -63,18 +138,15 @@ alias l "ls -lF"
 alias la "ls -aF"
 alias ll "ls -alF"
 
+# Clear alias
+alias cl clear
+
 # I want v to open vi and vi to open vim
 alias v nvim
 alias vi nvim
 alias vim nvim
 alias vd "nvim -d"
 alias vimdiff "nvim -d"
-
-# g to git (saves a few key strokes)
-alias g git
-alias ga "git add"
-alias gc "git commit"
-alias gg "git status"
 
 # TokyoNight Color Palette
 set -l foreground c0caf5
@@ -95,6 +167,7 @@ set -g fish_color_keyword $pink
 set -g fish_color_quote $yellow
 set -g fish_color_redirection $foreground
 set -g fish_color_end $orange
+set -g fish_color_option $pink
 set -g fish_color_error $red
 set -g fish_color_param $purple
 set -g fish_color_comment $comment
@@ -111,20 +184,40 @@ set -g fish_pager_color_completion $foreground
 set -g fish_pager_color_description $comment
 set -g fish_pager_color_selected_background --background=$selection
 
-# Load fzf
-type -q fzf_key_bindings && fzf_key_bindings
-
 # Turn on vi mode for fish
 fish_vi_key_bindings
 
-# Lets bind fzf for our / and ? search
-function fish_user_key_bindings
-    bind -M default / fzf-history-widget
-    bind -M default \? fzf-file-widget
-end
+# Load fzf
+type -q fzf_key_bindings && fzf_key_bindings
+
+# Disable ctrl-d for fish quit/exit
+bind --mode insert \cd false
+bind --mode default \cd false
+
+# FZF binds
+type -q fzf_configure_bindings && fzf_configure_bindings \
+    --directory=\cd \
+    --git_log=\cg \
+    --git_status=\cs \
+    --variables=\cv \
+    --processes=\cp
 
 # Load zoxide
-zoxide init fish | source
+if command -v zoxide >/dev/null
+    zoxide init fish --cmd cd | source
+end
+
+# Check for nproc
+if command -v nproc >/dev/null
+    alias nproc "sysctl -n hw.physicalcpu"
+end
 
 # Load starship prompt
-starship init fish | source
+if command -v starship >/dev/null
+    starship init fish | source
+end
+
+# Load the fuck
+if command -v thefuck >/dev/null
+    thefuck --alias | source
+end

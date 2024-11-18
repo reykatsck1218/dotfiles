@@ -6,7 +6,7 @@
 	"passthrough": false,
 	"gtk-layer-shell": true,
 	"height": 50,
-	"modules-left": ["custom/power", "cpu", "memory", "disk", "battery", "network" ],
+	"modules-left": ["cpu", "memory", "disk", "battery", "network"],
 	"modules-center": ["hyprland/workspaces"],
 	"modules-right": ["tray", "pulseaudio", "pulseaudio#microphone", "clock", "custom/notification"],
 
@@ -28,38 +28,48 @@
 	"cpu": {
 		"interval": 5,
 		"format": " {usage}%",
-		"on-click": "kitty -e btop"
+		"on-click": "alacritty -e btop"
 	},
+
+    "battery": {
+        "states": {
+            "half": 50,
+            "warning": 25,
+            "critical": 15
+        },
+        "format": " {capacity}%",
+        "format-half": " {capacity}%",
+        "format-warning": " {capacity}%",
+        "format-critical": " {capacity}%"
+    },
 
 	"memory": {
 		"interval": 5,
 		"format": " {}%",
-		"on-click": "kitty -e btop"
+		"on-click": "alacritty -e btop"
 	},
 
 	"disk": {
 		"interval": 5,
 		"format": " {percentage_used}%",
-		"on-click": "kitty -e btop"
+		"on-click": "alacritty -e btop"
 	},
 
 	"network": {
 		"format-icons": {
 			"wifi": "",
-			"ethernet": "",
-			"disconnected": "",
+			"ethernet": ""
 		},
-		"format": "{icon} {ifname} {bandwidthUpBytes} {bandwidthDownBytes}",
+		"format": " YOU IN THE WOODS?",
 		"format-wifi": "{icon} {essid} ({signalStrength}%) {bandwidthUpBytes} {bandwidthDownBytes}",
 		"format-ethernet": "{icon} {ipaddr}/{cidr} {bandwidthUpBytes} {bandwidthDownBytes}",
-		"format-disconnected": "{icon} {bandwidthUpBytes} {bandwidthDownBytes}",
 		"max-length": 50,
-		"interval": 1,
+		"interval": 1
 	},
 
 	"clock": {
-		"format": "{:%I:%M %p}",
-		"format-alt": "{: %A, %B %d, %Y %I:%M %p}",
+		"format": "{:%A, %B %d, %Y %I:%M %p}",
+		"format-alt": "{:%I:%M %p}",
 		"tooltip-format": "<tt><small>{calendar}</small></tt>",
 		"calendar": {
 			"mode"          : "year",
@@ -82,11 +92,6 @@
 			"on-scroll-up": "shift_up",
 			"on-scroll-down": "shift_down"
 		}
-	},
-
-	"custom/power" : {
-		"format": "",
-		"on-click": "wlogout -p layer-shell"
 	},
 
 	"custom/notification": {
