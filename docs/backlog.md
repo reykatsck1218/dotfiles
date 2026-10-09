@@ -170,8 +170,8 @@ Homebrew/scoop catalogs, with no fix available inside the manifest:
 - **Not packaged for apt or dnf, and not a crate**: `gemini-cli` (npm), `doctl`
   on apt, `lazygit` on dnf, and the kryptic-sh tools without a crates.io release
   (`pikr`, `buffr`, `inbx`, `hodl`, `krypt`). On Windows the kryptic-sh scoop
-  bucket has pikr, buffr, hrdr and krypt; `inbx`, `hodl` and `gemini-cli` are
-  missing there. pikr and buffr publish `.deb`/`.rpm` release assets, which
+  bucket has pikr, buffr, hrdr, krypt and tmxr; `inbx`, `hodl` and `gemini-cli`
+  are missing there. pikr and buffr publish `.deb`/`.rpm` release assets, which
   neither `krypt deps` nor apt/dnf can install by name. Options: a kryptic-sh
   apt/rpm repository, an npm source in krypt, or leaving them to the
   Arch/Homebrew lists.
