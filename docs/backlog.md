@@ -119,6 +119,15 @@
   Tracking `main` unpinned still means a krypt commit can turn this repo's CI
   red with no dotfiles change; pinning a tag makes runs reproducible at the cost
   of no longer exercising new krypt changes. Needs a decision.
+- **`krypt diff` on `slowassdell` (Arch) reports 31 of 113 entries dirty**
+  (2026-10-21). The 15 `missing` include files whose sources this repo deleted
+  (`tmux.conf`, `tmux.lua`, `rtk.ts`, `t`): the same no-forget gap as the
+  Windows mpv entry. Of the 16 `drifted`, the four checked (`config.fish`,
+  `starship.toml`, `.gitconfig`, `alacritty.toml`) match the repo byte for byte,
+  so the manifest's recorded hashes are stale, not the files edited; the other
+  twelve were not checked. `krypt link` skips a drifted destination, so repo
+  changes to those files stop deploying on that machine until each is checked
+  and re-linked with `--force`.
 - **krypt's own open items** (notify backends, interactive steps, CI toolchain)
   are tracked in `kryptic-sh/krypt` under `docs/backlog.md`.
 

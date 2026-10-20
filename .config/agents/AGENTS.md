@@ -47,8 +47,7 @@ commit whose author is not the user is not a stop.
 
 ## Commit Messages
 
-Use `git commit -m "$(quoty)"` only in the `.files` repo. All other repos:
-Conventional Commits format — `type(scope): message` (e.g.
+Every repo uses Conventional Commits format — `type(scope): message` (e.g.
 `feat(auth): add OAuth flow`, `fix(api): handle null token`,
 `docs: update README`). Scope optional. Types: feat, fix, docs, style, refactor,
 test, chore, perf, ci, build.
@@ -59,6 +58,51 @@ split. Then one blank line, then a body of 1–3 short paragraphs hard-wrapped a
 72 columns, saying what changed and why (the failure it fixes, the mechanism),
 not restating the diff. Omit the body only when the subject already says
 everything.
+
+## Pushing
+
+**Push each finished slice of work as soon as it is done.** A slice is finished
+when it is committed and its gate is green — the formatter, linter and tests the
+rules here call for. Push it then, before starting the next slice, in every repo
+the session touches. Finished work left as a local-only commit or as uncommitted
+changes is invisible to CI and to every other machine, and dies with the
+checkout.
+
+**Before ending a session, sweep every repo it touched:** fetch, then
+`git status -sb`. Anything ahead of its upstream or dirty gets pushed, or
+reported with the reason it was not.
+
+Pushing still follows the other rules: run the attribution check first, never
+force-push, and tags, releases and PRs still wait until they are asked for.
+
+## Dotfiles
+
+**The config files in `$HOME` are copies, deployed from the
+[mxaddict/dotfiles](https://github.com/mxaddict/dotfiles) repo by
+[krypt](https://github.com/kryptic-sh/krypt).** This file is one of them: its
+source is `.config/agents/AGENTS.md`, copied to `~/.claude/CLAUDE.md`,
+`~/.claude-work/CLAUDE.md`, `~/.codex/AGENTS.md` and
+`~/.config/opencode/AGENTS.md`. `.krypt/links.toml` maps every source to its
+destinations.
+
+**Change the repo, never the deployed copy.** An edit made in place never
+reaches the other machines, and it blocks the next deploy of that file: krypt
+skips a destination whose content differs from what it last wrote, so later
+changes from the repo stop landing there. To change a dotfile:
+
+1. Edit its source in a checkout of the repo (for example
+   `~/Projects/mxaddict/dotfiles`).
+2. Commit and push it, then wait for CI to go green.
+3. Run `krypt update`: it fast-forwards krypt's own clone of the repo
+   (`~/.config/krypt/repo`) and copies every changed file into place. Confirm
+   the deployed copies now match the source.
+
+`krypt diff` lists deployed files that differ from what krypt last wrote, and
+`krypt adopt <path>` copies an in-place edit back into the repo when it has to
+be kept. Some machines still have older symlinks into a `~/.files` clone of the
+same repo (`~/.config/nvim`, `~/.local/bin`), so krypt writes through them into
+that clone's tracked files; keep it fast-forwarded, or those writes show up
+there as uncommitted changes.
 
 ## Rust
 
