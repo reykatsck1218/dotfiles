@@ -87,6 +87,14 @@ jobs:
       - name: Every package resolves on this system
         run: krypt deps --config .krypt.toml --check
 
+      # krypt reports a tap formula as missing without brew's own error.
+      - name: Show brew's error for the kryptic-sh tap
+        if: failure() && matrix.name == 'macos'
+        run: |
+          brew --version
+          brew tap kryptic-sh/tap || true
+          brew info --json=v2 kryptic-sh/tap/tmxr || true
+
       - name: Install the core group
         run: krypt deps --config .krypt.toml --group core
 
