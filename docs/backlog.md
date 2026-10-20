@@ -98,11 +98,11 @@
 
 - **`[[command]]` steps swallow output and have no stdin.** `RealProcessExec` in
   `krypt-core/src/runner.rs` pipes stdout/stderr and nulls stdin for every step;
-  output survives only through `capture`. So `krypt system nproc` prints
-  nothing, `krypt system clearkeys` cannot prompt and `krypt tmux open` cannot
-  attach — on every OS, not just Windows. Options: inherit stdio for steps
-  without `capture`/`pipe` (hooks would then stream their output during
-  `krypt update`), or add a per-step `interactive = true`. Needs a decision.
+  output survives only through `capture`. So `krypt system nproc` prints nothing
+  and `krypt system clearkeys` cannot prompt — on every OS, not just Windows.
+  Options: inherit stdio for steps without `capture`/`pipe` (hooks would then
+  stream their output during `krypt update`), or add a per-step
+  `interactive = true`. Needs a decision.
 - **`${DOCUMENTS}` is `%USERPROFILE%\Documents` on Windows**
   (`Resolver::resolve_var_with_stack`). When Documents is redirected (OneDrive
   folder backup is common on Windows 11), the PowerShell profile deploys where
@@ -124,18 +124,39 @@
 
 ## Not ported to Windows
 
-- `system clear`, `system clearkeys`, `tmux open`, `menu mail`,
-  `menu emoji-update` and `browser open` are gated to Linux/macOS (or Linux) and
-  refuse on Windows, and their bash scripts are not deployed there. `env up`,
-  `env down`, `system nproc` and `ollama pull-all` have PowerShell ports in
+- `system clear`, `system clearkeys`, `menu mail`, `menu emoji-update` and
+  `browser open` are gated to Linux/macOS (or Linux) and refuse on Windows, and
+  their bash scripts are not deployed there. `env up`, `env down`,
+  `system nproc` and `ollama pull-all` have PowerShell ports in
   `.local/bin/*.ps1`, which duplicate the bucket name, stage list and model
   lookup of their bash originals.
 - **fish on Windows**: Alacritty and the profile use PowerShell 7 with uutils
-  coreutils until a usable native fish build exists; fish, tmux and their
-  configs are Linux/macOS only.
+  coreutils until a usable native fish build exists; fish and its config are
+  Linux/macOS only.
 - `.local/bin/.pull-all-models` reads `$HOME/.files/.config/opencode/`, which
   only exists when the repo is cloned to `~/.files`; the PowerShell port reads
   the deployed `~/.config/opencode/opencode.json` instead.
+
+## tmxr
+
+tmxr replaced tmux: its built-in defaults are a port of the old `tmux.conf` and
+its plugins, so the repo deploys no tmxr config, and `t` is a shell alias for
+`tmxr`, whose bare form opens the session named after the current directory.
+
+- **Considered and declined: keeping the old `t` script's three windows.** The
+  `[hooks] session-created = ["new-window -d", "new-window -d"]` config tmxr
+  documents for this also fires when tmxr restores a saved session at server
+  start (`resurrect.rs` builds it through `Server::new_session`, which queues
+  `session-created`). Verified with tmxr 0.9.0 on a scratch `-L` server: a
+  three-window session came back with five, and would gain two more on every
+  restart. Revisit once tmxr skips the hook on restore.
+- **tmux stays installed on existing machines.** It left the `core` deps group,
+  but `krypt deps` installs only; remove the package by hand where it is no
+  longer wanted.
+- **PowerShell's OSC 9;9 prompt hook is unverified under tmxr.** The profile's
+  `Invoke-Starship-PreCommand` announces the directory so tmxr's splits open
+  there on Windows, as tmxr's README describes; nobody has yet split a pane in
+  tmxr on Windows with it. It only runs when starship draws the prompt.
 
 ## CI
 
@@ -251,10 +272,6 @@ Homebrew/scoop catalogs, with no fix available inside the manifest:
   `opencode/node_modules`, the TPM plugins under `.config/tmux/plugins/`, fisher
   functions, `nvim/lazy-lock.json`. The migration copied these into the real
   `~/.config` dirs, so the repo's copies are now orphaned duplicates. They are
-  gitignored (harmless), but the repo tree could be pruned of them.
-- **`tpm-install` hook can't bootstrap tpm on a fresh krypt deploy.** Its `if`
-  guard requires `${XDG_CONFIG}/tmux/plugins/tpm/bin/install_plugins` to already
-  exist, which the old dir-symlink guaranteed but a copy-based deploy does not
-  (tpm is untracked, so `src_glob` no longer sweeps it in). A fresh machine now
-  needs a hook that clones tpm first. On this machine tpm was preserved by
-  copying it over, so nothing is broken here yet.
+  gitignored (harmless), but the repo tree could be pruned of them. tmux has
+  since been replaced by tmxr, so `.config/tmux/plugins/` is no longer ignored
+  and shows as untracked in an old clone that still has it.

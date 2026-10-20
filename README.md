@@ -96,13 +96,13 @@ deploys only the entries whose `platform` matches this OS.
 ```sh
 krypt update          # pull repo, relink, run post-update hooks
 krypt update --dry-run         # show plan, change nothing
-krypt update --skip-hooks      # skip nvim/tmux/dconf/bat/etc. plugin syncs
+krypt update --skip-hooks      # skip nvim/fisher/dconf/bat/etc. plugin syncs
 ```
 
 Hooks declared in `.krypt.toml` (`[[hook]] when = "post-update"`) cover:
 
 - mkdir essential `$HOME` dirs + `~/.local/log`
-- fisher / nvim Lazy / tpm plugin syncs
+- fisher / nvim Lazy plugin syncs
 - bat cache rebuild, tldr cache refresh
 - dconf load from `dconf/user.ini`
 - `hyprctl reload` (gated on hyprland running)
@@ -168,10 +168,11 @@ Optional:
 `$mod` = **Super** (Windows key). Every menu binding invokes `krypt menu <name>`
 or another krypt subcommand — see `.krypt/commands.toml` for the underlying
 step. `$mod + /` opens a cheatsheet of these binds, read each time it opens:
-Hyprland's running binds from `hyprctl binds` (tagged `Hyprland`), and the binds
-the deployed `tmux.conf` and its plugins add, in any key table (tagged `tmux`,
-or `tmux copy-mode`). Descriptions come from each bind's `description` /
-`bind -N` note, and from `.config/tmux/plugin-notes.sh` for plugin binds.
+Hyprland's running binds from `hyprctl binds` (tagged `Hyprland`), and tmxr's
+binds in its prefix and root tables and the copy-mode table `mode-keys` selects:
+its built-in defaults, with `~/.config/tmxr/config.toml` over them when there is
+one (tagged `tmxr`, or `tmxr copy-mode`). Descriptions come from each bind's
+`description` / `note`.
 
 ### Apps & menus
 

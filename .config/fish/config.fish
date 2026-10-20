@@ -205,6 +205,11 @@ function sql
     sqeel $argv
 end
 
+# Alias for tmxr
+function t
+    tmxr $argv
+end
+
 # Add navcoin alias
 function nav
     navcoin-cli $argv

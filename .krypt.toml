@@ -13,7 +13,7 @@ include = [
 
 [meta]
 name           = "mxaddict dotfiles"
-description    = "Arch-first dotfiles for Hyprland, Neovim, Fish, Tmux, and friends."
+description    = "Arch-first dotfiles for Hyprland, Neovim, Fish, tmxr, and friends."
 krypt_min      = "0.4.2"
 notify_backend = "auto"
 
@@ -162,20 +162,6 @@ name           = "nvim-plugin-sync"
 when           = "post-update"
 if             = "command_exists:nvim"
 run            = ["nvim", "--headless", "+Lazy! install all", "+Lazy! update all", "+TSUpdate", "+qa"]
-ignore_failure = true
-
-[[hook]]
-name           = "tpm-install"
-when           = "post-update"
-if             = "command_exists:tmux,file_exists:${XDG_CONFIG}/tmux/plugins/tpm/bin/install_plugins"
-run            = ["bash", "-c", "${XDG_CONFIG}/tmux/plugins/tpm/bin/install_plugins"]
-ignore_failure = true
-
-[[hook]]
-name           = "tpm-update"
-when           = "post-update"
-if             = "command_exists:tmux,file_exists:${XDG_CONFIG}/tmux/plugins/tpm/bin/update_plugins"
-run            = ["bash", "-c", "${XDG_CONFIG}/tmux/plugins/tpm/bin/update_plugins all"]
 ignore_failure = true
 
 [[hook]]

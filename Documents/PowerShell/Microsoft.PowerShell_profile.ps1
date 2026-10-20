@@ -263,6 +263,9 @@ function s { sqeel @args }
 function sq { sqeel @args }
 function sql { sqeel @args }
 
+# Alias for tmxr
+function t { tmxr @args }
+
 # Add navcoin alias
 function nav { navcoin-cli @args }
 
@@ -413,6 +416,17 @@ foreach ($name in $completions.Keys) {
     . $cache
 }
 Remove-Variable completions, completionCache, name, cmd, exe, cache, script -ErrorAction Ignore
+
+# tmxr opens new panes and windows in the current pane's directory, but
+# Set-Location does not change PowerShell's process directory, so tell tmxr
+# (and Windows Terminal) where the prompt is with OSC 9;9. Starship's prompt
+# calls this before drawing.
+function Invoke-Starship-PreCommand {
+    $loc = $executionContext.SessionState.Path.CurrentLocation
+    if ($loc.Provider.Name -eq 'FileSystem') {
+        $host.UI.Write("`e]9;9;`"$($loc.ProviderPath)`"`e\")
+    }
+}
 
 # Load starship prompt
 if (Test-Command starship) {

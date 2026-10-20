@@ -16,23 +16,23 @@ group = "core"
 pacman = [
     "alacritty", "bat", "btop", "curl", "eza", "fastfetch", "fd", "fish",
     "fzf", "git", "jq", "neovim", "ripgrep", "starship", "stow", "tealdeer",
-    "tmux", "unzip", "wget", "zoxide",
+    "unzip", "wget", "zoxide",
 ]
 apt = [
     "alacritty", "bat", "btop", "curl", "eza", "fastfetch", "fd-find", "fish",
     "fzf", "git", "jq", "neovim", "ripgrep", "starship", "stow", "tealdeer",
-    "tmux", "unzip", "wget", "zoxide",
+    "unzip", "wget", "zoxide",
 ]
 dnf = [
     "alacritty", "bat", "btop", "cargo:starship", "curl", "eza", "fastfetch",
     "fd-find", "fish", "fzf", "git", "jq", "neovim", "ripgrep", "stow",
-    "tealdeer", "tmux", "unzip", "wget", "zoxide",
+    "tealdeer", "unzip", "wget", "zoxide",
 ]
 # Homebrew disabled its alacritty cask on 2026-09-01 (fails Gatekeeper); see
 # docs/backlog.md.
 brew = [
     "bat", "btop", "eza", "fastfetch", "fd", "fish", "fzf", "git", "jq",
-    "neovim", "ripgrep", "starship", "stow", "tealdeer", "tmux", "unzip", "wget",
+    "neovim", "ripgrep", "starship", "stow", "tealdeer", "unzip", "wget",
     "zoxide",
 ]
 # Windows uses scoop: per-user installs under ~/scoop, no UAC prompt. krypt adds

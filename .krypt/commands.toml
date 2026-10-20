@@ -22,7 +22,7 @@ steps = [
 [[command]]
 group       = "menu"
 name        = "keys"
-description = "Keybinding cheatsheet — Hyprland and tmux binds, shown in pikr"
+description = "Keybinding cheatsheet — Hyprland and tmxr binds, shown in pikr"
 platform    = "linux"
 steps = [
     { run = ["bash", "${HOME}/.local/bin/.menu-keys"], ignore_failure = true },
@@ -195,19 +195,6 @@ description = "Download .env.* files for the current project from a GCS bucket"
 platform    = "windows"
 steps = [
     { if = "command_exists:gcloud", run = ["pwsh", "-NoProfile", "-File", "${HOME}/.local/bin/.envdown.ps1"] },
-]
-
-# ---------------------------------------------------------------------------
-# tmux group
-# ---------------------------------------------------------------------------
-
-[[command]]
-group       = "tmux"
-name        = "open"
-description = "Open (or attach to) a tmux session named after the current directory"
-platform    = ["linux", "macos"]
-steps = [
-    { if = "command_exists:tmux", run = ["bash", "${HOME}/.local/bin/t"] },
 ]
 
 # ---------------------------------------------------------------------------

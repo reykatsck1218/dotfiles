@@ -28,8 +28,7 @@ Scripts in `.local/bin/` use a leading `.` (e.g. `.menu-apps`, `.kanata`,
 `.envup`). This hides them from `ls` while keeping them invocable from
 `.krypt/commands.toml`. New scripts should follow the same pattern.
 
-Exceptions: third-party binaries (`grimblast`) and scripts invoked directly from
-the shell (`t` — tmux session-per-cwd) keep their upstream / unprefixed name.
+Exception: third-party binaries (`grimblast`) keep their upstream name.
 
 ## Lint / format
 

@@ -98,8 +98,6 @@ try {
         '.config/mpv/mpv.conf'      = '.config/mpv/mpv.conf'
         '.config/tealdeer/config.toml' = '.config/tealdeer/config.toml'
         '.config/fish/config.fish'  = '.config/fish/config.fish'
-        '.config/tmux/tmux.conf'    = '.config/tmux/tmux.conf'
-        '.local/bin/t'              = '.local/bin/t'
         '.local/bin/.nproc'         = '.local/bin/.nproc'
     }
     $macosOnly = [ordered]@{
@@ -136,10 +134,10 @@ try {
     }
     if ($os -eq 'windows') {
         # Gated by a platform list, so the refusal names both platforms.
-        $refusal = & { $ErrorActionPreference = 'Continue'; & krypt tmux open 2>&1 | ForEach-Object { "$_" } }
+        $refusal = & { $ErrorActionPreference = 'Continue'; & krypt system clear 2>&1 | ForEach-Object { "$_" } }
         $refusal
         if ($LASTEXITCODE -eq 0 -or -not ($refusal -match 'restricted to linux, macos')) {
-            $failures.Add('krypt tmux open on windows did not refuse as linux/macos-only')
+            $failures.Add('krypt system clear on windows did not refuse as linux/macos-only')
         }
     }
 
@@ -162,6 +160,7 @@ try {
             foreach ($name in 'h', 'gl', 'nv') {
                 if ((Get-Command $name).CommandType -ne 'Function') { throw "$name does not resolve to the profile function" }
             }
+            if ((Get-Command t).Definition.Trim() -ne 'tmxr @args') { throw 't is not the tmxr alias' }
             if ((Get-PSReadLineOption).EditMode -ne 'Vi') { throw 'vi mode is not enabled' }
             $bound = Get-PSReadLineKeyHandler -Bound
             foreach ($key in @{ Tab = 'MenuComplete'; UpArrow = 'HistorySearchBackward'; RightArrow = 'ForwardChar' }.GetEnumerator()) {
