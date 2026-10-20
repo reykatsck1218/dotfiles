@@ -188,6 +188,19 @@ its plugins, so the repo deploys no tmxr config, and `t` is a shell alias for
 Gaps `krypt deps --check` confirmed against the distro repositories and
 Homebrew/scoop catalogs, with no fix available inside the manifest:
 
+- **Homebrew 7 cannot tap `kryptic-sh/tap`, so no kryptic-sh tool installs on
+  macOS.** Since the 2026-10-19 scheduled `deps` run (Homebrew 7.0.9 on the
+  runner), `brew tap kryptic-sh/tap` fails with "invalid syntax in tap": every
+  formula sets its `url` only inside `on_macos`, and brew now loads each one for
+  `x86_64_linux` and `arm64_linux` as well, where it has none ("formula requires
+  at least a URL"). `krypt deps --check` drops brew's stderr and reports each
+  tap entry missing, tmxr included; the `deps (macos)` job prints brew's own
+  error when that step fails. The formulae are generated from each tool's
+  `pkg/homebrew/*.rb.in`, so the fix is upstream in every tool plus a
+  regenerated tap: an `on_linux` block with the Linux release archives the tools
+  already publish, or a macOS-only requirement — which of the two Homebrew 7
+  accepts is untested. Until then `deps (macos)` stays red. `Casks/buffr.rb`
+  also triggers a deprecation warning for its string `depends_on macos:`.
 - **Not packaged for apt or dnf, and not a crate**: `gemini-cli` (npm), `doctl`
   on apt, `lazygit` on dnf, and the kryptic-sh tools without a crates.io release
   (`pikr`, `buffr`, `inbx`, `hodl`, `krypt`). On Windows the kryptic-sh scoop
