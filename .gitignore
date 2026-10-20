@@ -6,8 +6,6 @@
 !.config/Vieb/viebrc
 !.config/opencode/opencode.json
 !.config/opencode/package-lock.json
-!.config/opencode/plugins
-!.config/opencode/plugins/rtk.ts
 !.config/opencode/tui.json
 !Cargo.lock
 *.cache
