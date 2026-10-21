@@ -274,8 +274,3 @@ Homebrew/scoop catalogs, with no fix available inside the manifest:
   A machine that still has a `~/.files` clone needs the same treatment before
   the clone goes: `~/.claude`, `~/.claude-work` and `~/.codex` were symlinks
   into it holding credentials and session state.
-- **Broken stow symlinks on the Arch machine.** `~/.config/helix/config.toml`,
-  `~/.config/helix/languages.toml` and
-  `~/.config/qutebrowser/{config.py, tokyonight.py,quickmarks}` point into
-  `~/.files`, whose copies were removed from the repo before the clone was
-  retired. Nothing reads them; delete them or restore the configs.
