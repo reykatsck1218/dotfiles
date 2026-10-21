@@ -142,9 +142,6 @@
 - **fish on Windows**: Alacritty and the profile use PowerShell 7 with uutils
   coreutils until a usable native fish build exists; fish and its config are
   Linux/macOS only.
-- `.local/bin/.pull-all-models` reads `$HOME/.files/.config/opencode/`, which
-  only exists when the repo is cloned to `~/.files`; the PowerShell port reads
-  the deployed `~/.config/opencode/opencode.json` instead.
 
 ## tmxr
 
@@ -261,26 +258,24 @@ Homebrew/scoop catalogs, with no fix available inside the manifest:
   sets `CARGO_HOME`. Its `jobs = 16` is overridden by `CARGO_BUILD_JOBS` from
   the fish and PowerShell configs anyway. Options: retarget it to
   `~/.cargo/config.toml`, or delete it.
-- **Configs deployed by the old stow setup but not by krypt stay symlinked.**
-  This machine was migrated from the whole-repo stow symlinks to krypt's
-  copy-based deploy, but `.krypt/links.toml` covers only a curated subset. So
-  `.config/nushell`, `.config/hjkl/config.toml`, `.config/hrdr/config.toml`,
-  `.agents`, `.codex/config.toml`, plus repo-meta (`docs`, `.krypt.toml`,
-  `.gitignore`) are still `~ -> .files` symlinks, not krypt-managed. Decision:
-  add the real configs among these to `[[link]]` entries so krypt owns them, or
-  leave them symlinked deliberately. Repo-meta should stay out of krypt either
-  way. `~/.claude`, `~/.claude-work` and `~/.codex` are now `[[link]]`
-  destinations (the agent rules, Claude settings and statusline), so on that
-  machine any `~ -> .files` symlink among those three has to become a real
-  directory before the next `krypt link`: through the symlink, krypt would write
-  its copies back into the repo's gitignored `.claude*/` and `.codex/`, and copy
-  `.claude/settings.json` onto itself.
-- **Runtime data still lives in the repo working tree after the migration.**
-  Because the old model symlinked `~/.config/{tmux,fish,nvim,opencode}` into the
-  repo, plugin managers wrote their clones there (gitignored): `~58M` of
-  `opencode/node_modules`, the TPM plugins under `.config/tmux/plugins/`, fisher
-  functions, `nvim/lazy-lock.json`. The migration copied these into the real
-  `~/.config` dirs, so the repo's copies are now orphaned duplicates. They are
-  gitignored (harmless), but the repo tree could be pruned of them. tmux has
-  since been replaced by tmxr, so `.config/tmux/plugins/` is no longer ignored
-  and shows as untracked in an old clone that still has it.
+- **Configs the old stow setup deployed but krypt does not are frozen copies.**
+  On the Arch machine the `~/.files` clone was retired on 2026-10-21 (krypt's
+  clone is now `~/.config/krypt/repo`), and each `~ -> .files` symlink was
+  replaced by the file it pointed to. None of these is in `.krypt/links.toml`,
+  so repo changes no longer reach them: `.config/nushell`,
+  `.config/hjkl/config.toml`, `.config/hrdr/config.toml`, `.agents`,
+  `.codex/config.toml`, plus repo-meta (`docs`, `.krypt.toml`, `.krypt`,
+  `.gitignore`). Decision: add the real configs among these to `[[link]]`
+  entries so krypt owns them, or leave them unmanaged deliberately. Repo-meta
+  should stay out of krypt, and its copies in `$HOME` can go, except
+  `~/.gitignore`: the `.gitconfig` names it as `core.excludesfile`, so every
+  repo on the machine ignores what this repo ignores (`*.lock`, `*.log`,
+  `.cache`, ...). It needs its own global excludes file, or the setting dropped.
+  A machine that still has a `~/.files` clone needs the same treatment before
+  the clone goes: `~/.claude`, `~/.claude-work` and `~/.codex` were symlinks
+  into it holding credentials and session state.
+- **Broken stow symlinks on the Arch machine.** `~/.config/helix/config.toml`,
+  `~/.config/helix/languages.toml` and
+  `~/.config/qutebrowser/{config.py, tokyonight.py,quickmarks}` point into
+  `~/.files`, whose copies were removed from the repo before the clone was
+  retired. Nothing reads them; delete them or restore the configs.
