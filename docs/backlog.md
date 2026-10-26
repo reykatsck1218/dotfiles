@@ -46,8 +46,9 @@
 
 - **`krypt diff` still lists a removed link.** Dropping the Windows mpv
   `[[link]]` left `%APPDATA%\mpv\mpv.conf` in krypt's manifest, so it shows as
-  `missing` after the file was deleted. krypt has no command that forgets a
-  manifest entry whose link is gone (tracked in krypt's backlog).
+  `missing` after the file was deleted. krypt 0.4.4's `link` (and so `update`)
+  forgets manifest entries the config no longer deploys, which drops it; not yet
+  run on the Windows machine, which needs 0.4.4 and one `krypt update`.
 - **Machines set up with winget keep those installs.** The Windows groups moved
   from winget to scoop, and nothing uninstalls the winget copies, so a machine
   that ran the old `krypt deps` has both (e.g. `Git.Git` under `Program Files`
@@ -119,15 +120,14 @@
   Tracking `main` unpinned still means a krypt commit can turn this repo's CI
   red with no dotfiles change; pinning a tag makes runs reproducible at the cost
   of no longer exercising new krypt changes. Needs a decision.
-- **`krypt diff` on `slowassdell` (Arch) reports 31 of 113 entries dirty**
-  (2026-10-21). The 15 `missing` include files whose sources this repo deleted
-  (`tmux.conf`, `tmux.lua`, `rtk.ts`, `t`): the same no-forget gap as the
-  Windows mpv entry. Of the 16 `drifted`, the four checked (`config.fish`,
-  `starship.toml`, `.gitconfig`, `alacritty.toml`) match the repo byte for byte,
-  so the manifest's recorded hashes are stale, not the files edited; the other
-  twelve were not checked. `krypt link` skips a drifted destination, so repo
-  changes to those files stop deploying on that machine until each is checked
-  and re-linked with `--force`.
+- **`krypt diff` lists template destinations as drifted.** On `slowassdell`
+  (Arch, krypt 0.4.4, 2026-10-26) it reports 4 of 102 entries dirty:
+  `~/.config/gh/hosts.yml` (see [Git](#git)), and `~/.config/hypr/apps.lua`,
+  `~/.config/hypr/input.lua` and `~/.gitconfig.local`, which `krypt setup`
+  renders from their `[[template]]` sources, so they differ from the repo on
+  purpose. krypt 0.4.3 stopped counting a destination that already matches its
+  source as a conflict, and 0.4.4 forgot the 15 entries this repo had deleted,
+  which cleared the 31 dirty entries recorded on 2026-10-21.
 - **krypt's own open items** (notify backends, interactive steps, CI toolchain)
   are tracked in `kryptic-sh/krypt` under `docs/backlog.md`.
 
@@ -164,6 +164,44 @@ its plugins, so the repo deploys no tmxr config, and `t` is a shell alias for
   there on Windows, as tmxr's README describes; nobody has yet split a pane in
   tmxr on Windows with it. It only runs when starship draws the prompt.
 
+## lyr
+
+lyr replaced waybar and swaync on 2026-10-26: Hyprland starts it, and the
+notification, Wi-Fi, audio and Bluetooth binds and the `krypt menu` commands run
+`lyr` subcommands.
+
+- **waybar and swaync are still deployed as a fallback**, by the owner's choice:
+  `.config/waybar/`, `.config/swaync/`, their `src_glob` links and the `waybar`
+  and `swaync` pacman packages stay, and so does `.local/bin/.swaync-test`
+  (which now only fires test notifications, at whichever daemon is running).
+  lyr's plan (`docs/plan/05-layout-and-config.md` in kryptic-sh/lyr) removes
+  both once lyr has run as the daily bar for a while. Retiring them means
+  deleting the two config directories and their `[[link]]` entries, the two
+  packages, and the fallback line under "Bar" in the README; `krypt update` then
+  forgets the deployed copies (krypt 0.4.4 deletes the unedited ones), and the
+  packages need a manual `pacman -Rns`, since `krypt deps` only installs. Needs
+  the owner's call on when.
+- **swaync takes the notification name back if lyr is not running.** The swaync
+  package ships a D-Bus activation file
+  (`/usr/share/dbus-1/services/org.erikreider.swaync.service`), so the first
+  notification sent while nothing owns `org.freedesktop.Notifications` starts
+  swaync. lyr claims the name only when it starts, so restarting lyr afterwards
+  does not make it the daemon until swaync is stopped first. Goes away with the
+  swaync package.
+- **Nothing starts lyr on macOS or Windows.** The `kryptic` group installs it
+  there (`kryptic-sh/tap/lyr`, `kryptic-sh/lyr`), but only `hyprland.lua` runs
+  it. Options: a launchd agent and a Startup-folder shortcut (or scheduled
+  task), each deployed by a `[[link]]`; or drop lyr from the brew and scoop
+  lists until it is wanted there. Needs a decision.
+- **No apt or dnf install.** `lyr-bin` is on crates.io (0.1.0, published
+  2026-10-26), but the apt and dnf lists have no `cargo:lyr-bin`, unlike the
+  other kryptic-sh tools with a crate. Not added, because those machines may
+  have no Wayland session to run a bar in. Needs a decision.
+- **Existing `apps.lua` files keep `notify = "swaync-client"`.** It was dropped
+  from `apps.template.lua`, but `krypt setup` renders that template once, so
+  machines set up before keep the line. Nothing reads it any more; delete it by
+  hand if wanted.
+
 ## CI
 
 - **PSScriptAnalyzer enforces only `ParseError` and `Error` severity** (the
@@ -173,6 +211,12 @@ its plugins, so the repo deploys no tmxr config, and `t` is a shell alias for
 
 ## Coverage gaps
 
+- **The README's `~/.files` migration misses chained links.** Step 3 resolves
+  each link with `readlink -f`, which follows the whole chain, so a link into
+  the clone whose target there is itself a link pointing outside it resolves
+  outside `~/.files` and is not listed; deleting the clone then breaks it. No
+  such link existed on `slowassdell`, so the snippet stayed simple. Fix if one
+  turns up: resolve one hop (`readlink`, made absolute) instead of the chain.
 - **Post-update hooks are not run anywhere in CI**: `krypt update` needs a repo
   it can pull, and `test-setup.ps1` uses `krypt link`.
 - **Alacritty's macOS shell entry is unverified on a Mac.**
@@ -196,8 +240,8 @@ Homebrew/scoop catalogs, with no fix available inside the manifest:
 
 - **Not packaged for apt or dnf, and not a crate**: `gemini-cli` (npm), `doctl`
   on apt, `lazygit` on dnf, and the kryptic-sh tools without a crates.io release
-  (`pikr`, `buffr`, `inbx`, `hodl`, `krypt`, `lyr`). On Windows the kryptic-sh
-  scoop bucket has pikr, buffr, hrdr, krypt, lyr and tmxr; `inbx`, `hodl` and
+  (`pikr`, `buffr`, `inbx`, `hodl`, `krypt`). On Windows the kryptic-sh scoop
+  bucket has pikr, buffr, hrdr, krypt, lyr and tmxr; `inbx`, `hodl` and
   `gemini-cli` are missing there. pikr and buffr publish `.deb`/`.rpm` release
   assets, which neither `krypt deps` nor apt/dnf can install by name. Options: a
   kryptic-sh apt/rpm repository, an npm source in krypt, or leaving them to the

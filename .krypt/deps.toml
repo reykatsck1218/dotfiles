@@ -140,8 +140,8 @@ scoop = ["duf", "extras/firefox", "extras/thunderbird"]
 # kryptic-sh tools. Arch uses the AUR -bin packages (via paru), macOS the
 # kryptic-sh Homebrew tap and Windows the kryptic-sh scoop bucket. Other systems
 # build the ones published on crates.io with cargo, which needs a default Rust
-# toolchain (the dev group's rustup). pikr, buffr, inbx, hodl, krypt and lyr
-# publish no crate or distro repository, and gemini-cli is an npm package; see
+# toolchain (the dev group's rustup). pikr, buffr, inbx, hodl and krypt publish
+# no crate or distro repository, and gemini-cli is an npm package; see
 # docs/backlog.md.
 [[deps]]
 group = "kryptic"
