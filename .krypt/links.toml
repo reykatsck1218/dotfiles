@@ -395,11 +395,6 @@ dst = "${LOCAL_BIN}/.menu-time"
 platform = "linux"
 
 [[link]]
-src = ".local/bin/.menu-wifi"
-dst = "${LOCAL_BIN}/.menu-wifi"
-platform = "linux"
-
-[[link]]
 src = ".local/bin/.mirror"
 dst = "${LOCAL_BIN}/.mirror"
 platform = "linux"

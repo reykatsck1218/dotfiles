@@ -15,8 +15,7 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("hyprctl setcursor Breeze_Light 24")
   hl.exec_cmd("hypridle")
   hl.exec_cmd("hyprpaper")
-  hl.exec_cmd("waybar")
-  hl.exec_cmd("swaync")
+  hl.exec_cmd("lyr")
   hl.exec_cmd("swayosd-server")
   -- The user manager outlives a logout: the agent restarts while no compositor
   -- exists, hits its start limit, and a plain start is then refused. One shell
@@ -166,9 +165,9 @@ hl.bind(
 hl.bind("CTRL + SHIFT + K", hl.dsp.exec_cmd("krypt kanata toggle"), { description = "Toggle kanata keyboard remapper" })
 
 -- Notification center
-hl.bind(mod .. " + N", hl.dsp.exec_cmd(apps.notify .. " -t -sw"), { description = "Toggle notification center" })
-hl.bind(mod .. " + SHIFT + N", hl.dsp.exec_cmd(apps.notify .. " -d -sw"), { description = "Toggle do not disturb" })
-hl.bind(mod .. " + ALT + N", hl.dsp.exec_cmd(apps.notify .. " -C -sw"), { description = "Clear all notifications" })
+hl.bind(mod .. " + N", hl.dsp.exec_cmd("lyr panel clock"), { description = "Toggle notification center" })
+hl.bind(mod .. " + SHIFT + N", hl.dsp.exec_cmd("lyr dnd"), { description = "Toggle do not disturb" })
+hl.bind(mod .. " + ALT + N", hl.dsp.exec_cmd("lyr clear"), { description = "Clear all notifications" })
 
 -- Browser
 hl.bind(mod .. " + B", hl.dsp.exec_cmd(apps.browser), { description = "Open browser" })
@@ -209,9 +208,9 @@ hl.bind("XF86PowerOff", hl.dsp.exec_cmd("krypt menu power"), { description = "Po
 hl.bind(mod .. " + space", hl.dsp.exec_cmd("krypt menu apps"), { description = "App launcher" })
 hl.bind(mod .. " + R", hl.dsp.exec_cmd("krypt menu calc"), { description = "Calculator" })
 hl.bind(mod .. " + period", hl.dsp.exec_cmd("krypt menu emoji"), { description = "Emoji picker" })
-hl.bind(mod .. " + W", hl.dsp.exec_cmd("krypt menu wifi"), { description = "Wi-Fi menu" })
-hl.bind(mod .. " + A", hl.dsp.exec_cmd("krypt menu audio"), { description = "Audio mixer" })
-hl.bind(mod .. " + U", hl.dsp.exec_cmd("krypt menu bluetooth"), { description = "Bluetooth menu" })
+hl.bind(mod .. " + W", hl.dsp.exec_cmd("lyr panel wifi"), { description = "Wi-Fi menu" })
+hl.bind(mod .. " + A", hl.dsp.exec_cmd("lyr panel audio"), { description = "Audio menu" })
+hl.bind(mod .. " + U", hl.dsp.exec_cmd("lyr panel bluetooth"), { description = "Bluetooth menu" })
 hl.bind(mod .. " + T", hl.dsp.exec_cmd("krypt menu time"), { description = "Timezone picker" })
 hl.bind(mod .. " + escape", hl.dsp.exec_cmd("krypt menu top"), { description = "System monitor (btop)" })
 

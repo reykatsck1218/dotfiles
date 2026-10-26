@@ -168,5 +168,5 @@ AND.
 GitHub Issues. Include:
 
 - Distro + kernel
-- Hyprland / waybar / fish / krypt versions (`krypt --version`)
+- Hyprland / lyr / fish / krypt versions (`krypt --version`)
 - Output of `krypt update --dry-run`

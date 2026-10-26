@@ -41,29 +41,28 @@ steps = [
 [[command]]
 group       = "menu"
 name        = "wifi"
-description = "Wi-Fi network picker via nmcli + pikr"
+description = "Toggle lyr's Wi-Fi menu"
 platform    = "linux"
 steps = [
-    # nmcli parsing + conditional connect flow — kept as single shell step.
-    { run = ["bash", "${HOME}/.local/bin/.menu-wifi"], ignore_failure = true },
+    { run = ["lyr", "panel", "wifi"] },
 ]
 
 [[command]]
 group       = "menu"
 name        = "audio"
-description = "Audio mixer (wiremix) in a floating alacritty window"
+description = "Toggle lyr's audio menu"
 platform    = "linux"
 steps = [
-    { run = ["alacritty", "--class", "floating", "-e", "wiremix", "--tab", "output"] },
+    { run = ["lyr", "panel", "audio"] },
 ]
 
 [[command]]
 group       = "menu"
 name        = "bluetooth"
-description = "Bluetooth TUI (bluetui) in a floating alacritty window"
+description = "Toggle lyr's Bluetooth menu"
 platform    = "linux"
 steps = [
-    { run = ["alacritty", "--class", "floating", "-e", "bluetui"] },
+    { run = ["lyr", "panel", "bluetooth"] },
 ]
 
 [[command]]
@@ -115,7 +114,7 @@ steps = [
 [[command]]
 group       = "menu"
 name        = "time"
-description = "Timezone picker — updates system timezone and restarts waybar"
+description = "Timezone picker — updates system timezone"
 platform    = "linux"
 steps = [
     { run = ["bash", "${HOME}/.local/bin/.menu-time"], ignore_failure = true },
@@ -338,7 +337,7 @@ steps = [
 [[command]]
 group       = "system"
 name        = "swaync-test"
-description = "Restart swaync and fire a suite of test notifications"
+description = "Fire a suite of test notifications"
 platform    = "linux"
 steps = [
     { run = ["bash", "${HOME}/.local/bin/.swaync-test"], ignore_failure = true },

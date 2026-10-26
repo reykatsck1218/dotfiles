@@ -40,10 +40,12 @@ genuinely shell-shaped.
 - **Terminal**: [Alacritty](https://alacritty.org/).
 - **Editor**: [Neovim](https://neovim.io/) +
   [LazyVim](https://www.lazyvim.org/).
-- **Bar**: [Waybar](https://github.com/Alexays/Waybar).
+- **Bar**: [lyr](https://github.com/kryptic-sh/lyr), with its own Wi-Fi,
+  Bluetooth, audio and power menus. Waybar stays installed as a fallback.
 - **Launcher**: [pikr](https://github.com/kryptic-sh/pikr) — vim-like fuzzy
   picker.
-- **Notifications**: [swaync](https://github.com/Lentera/swaync).
+- **Notifications**: lyr, which is the notification daemon and keeps the history
+  under its clock panel's calendar.
 - **File Manager**: [Nautilus](https://help.gnome.org/users/nautilus/).
 - **Browser**: [Vieb](https://github.com/Jelmerro/Vieb).
 - **Screenshot**: [Grimblast](https://github.com/hyprwm/contrib).
@@ -180,7 +182,7 @@ Bash scripts in `.local/bin/.*` (e.g. `.menu-power`, `.kanata`) **stay on disk**
 `ft=bash` treatment instead of being inlined into TOML strings.
 
 The Hyprland keybinds in `hyprland.lua` now invoke `krypt menu <name>` instead
-of the scripts directly. Same for waybar `on-click` handlers.
+of the scripts directly. lyr's modules open lyr's own menus.
 
 ## Templates (user-specific, gitignored)
 
@@ -221,23 +223,23 @@ one (tagged `tmxr`, or `tmxr copy-mode`). Descriptions come from each bind's
 
 ### Apps & menus
 
-| Bind                  | krypt invocation       | Action                  |
-| --------------------- | ---------------------- | ----------------------- |
-| `$mod + return` / `c` | —                      | Alacritty               |
-| `$mod + b`            | —                      | Browser                 |
-| `$mod + e`            | —                      | Nautilus                |
-| `$mod + space`        | `krypt menu apps`      | App launcher            |
-| `$mod + r`            | `krypt menu calc`      | qalculate picker        |
-| `$mod + .`            | `krypt menu emoji`     | Emoji picker            |
-| `$mod + w`            | `krypt menu wifi`      | WiFi picker             |
-| `$mod + a`            | `krypt menu audio`     | wiremix                 |
-| `$mod + u`            | `krypt menu bluetooth` | bluetui                 |
-| `$mod + t`            | `krypt menu time`      | Timezone picker         |
-| `$mod + escape`       | `krypt menu top`       | btop                    |
-| `$mod + shift + m`    | `krypt menu power`     | Power picker            |
-| `$mod + /`            | `krypt menu keys`      | Keybinding cheatsheet   |
-| `$mod + n` / `+S+n`   | —                      | swaync toggle / dismiss |
-| `ctrl + shift + k`    | `krypt kanata toggle`  | Toggle kanata.service   |
+| Bind                         | krypt invocation      | Action                                     |
+| ---------------------------- | --------------------- | ------------------------------------------ |
+| `$mod + return` / `c`        | —                     | Alacritty                                  |
+| `$mod + b`                   | —                     | Browser                                    |
+| `$mod + e`                   | —                     | Nautilus                                   |
+| `$mod + space`               | `krypt menu apps`     | App launcher                               |
+| `$mod + r`                   | `krypt menu calc`     | qalculate picker                           |
+| `$mod + .`                   | `krypt menu emoji`    | Emoji picker                               |
+| `$mod + w`                   | —                     | lyr Wi-Fi menu                             |
+| `$mod + a`                   | —                     | lyr audio menu                             |
+| `$mod + u`                   | —                     | lyr Bluetooth menu                         |
+| `$mod + t`                   | `krypt menu time`     | Timezone picker                            |
+| `$mod + escape`              | `krypt menu top`      | btop                                       |
+| `$mod + shift + m`           | `krypt menu power`    | Power picker                               |
+| `$mod + /`                   | `krypt menu keys`     | Keybinding cheatsheet                      |
+| `$mod + n` / `+S+n` / `+A+n` | —                     | lyr notifications / do not disturb / clear |
+| `ctrl + shift + k`           | `krypt kanata toggle` | Toggle kanata.service                      |
 
 ### Autofill (pass + wtype)
 
