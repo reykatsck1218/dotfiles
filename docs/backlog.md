@@ -121,8 +121,7 @@
   red with no dotfiles change; pinning a tag makes runs reproducible at the cost
   of no longer exercising new krypt changes. Needs a decision.
 - **`krypt diff` lists template destinations as drifted.** On `slowassdell`
-  (Arch, krypt 0.4.4, 2026-10-26) it reports 4 of 102 entries dirty:
-  `~/.config/gh/hosts.yml` (see [Git](#git)), and `~/.config/hypr/apps.lua`,
+  (Arch, krypt 0.4.4, 2026-10-26) it reports `~/.config/hypr/apps.lua`,
   `~/.config/hypr/input.lua` and `~/.gitconfig.local`, which `krypt setup`
   renders from their `[[template]]` sources, so they differ from the repo on
   purpose. krypt 0.4.3 stopped counting a destination that already matches its
@@ -280,10 +279,6 @@ Homebrew/scoop catalogs, with no fix available inside the manifest:
   repo's `.gitignore` is repo-meta, not a global ignore list, so on a krypt-only
   machine git has no global ignores. Options: a dedicated global ignore file
   with a `[[link]]`, or drop the setting.
-- **gh rewrites the tracked `.config/gh/hosts.yml`.** `gh auth login` re-indents
-  it (4 spaces instead of 2, content otherwise identical), so `krypt diff`
-  reports it drifted and `krypt link` skips it as a conflict after every login.
-  Options: commit gh's formatting, or stop tracking a file gh owns.
 - **Claude Code rewrites the deployed `~/.claude/settings.json`.** Changing a
   setting through `/config` writes to that file, so `krypt diff` reports it
   drifted and `krypt link` skips it as a conflict until the change is pulled
