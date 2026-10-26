@@ -122,17 +122,62 @@ Hooks declared in `.krypt.toml` (`[[hook]] when = "post-update"`) cover:
 
 ## Migration from the old stow-bash version
 
-If you used `.files` before krypt landed (`.update` / `.setup` bash scripts):
+If you used the `~/.files` clone before krypt landed (`.update` / `.setup` bash
+scripts), `$HOME` is full of stow symlinks into that clone. Keep them and krypt
+writes through them into the clone's tracked files, which then show up there as
+uncommitted changes. Replace them with real files and retire the clone:
 
-1. `paru -S krypt-bin` (or your platform's install)
-2. `git -C ~/.files pull`
-3. `krypt update` — replaces the old `.update` chain; reloads hyprland if active
-4. Existing `~/.config/hypr/{apps,input,monitors,hyprpaper}.conf` etc. stay
-   untouched (gitignored, krypt does not overwrite seeded files)
+1. Install krypt 0.4.3 or newer (see [Install](#1-install-krypt)). Older
+   versions skip every file that already matches the repo as a conflict.
+2. Bring the clone level with the repo: commit and push anything you changed in
+   it, then `git -C ~/.files pull`. Every file you move home then matches the
+   repo, so krypt takes it over as already deployed.
+3. List every symlink into the clone, and read the list before going on:
 
-Bash scripts in `.local/bin/.*` (e.g. `.menu-power`, `.kanata`, `t`) **stay on
-disk** — krypt invokes them via `[[command]]` entries. They get full
-`shellcheck` + `ft=bash` treatment instead of being inlined into TOML strings.
+   ```bash
+   find ~ -xdev \( -path ~/.files -o -path ~/.cache \) -prune -o -type l -print |
+     while IFS= read -r link; do
+       target=$(readlink -f "$link")
+       case "$target" in "$HOME"/.files/*) printf '%s\t%s\n' "$link" "$target" ;; esac
+     done > ~/files-links.tsv
+   ```
+
+4. Swap each link for the file or directory it points at. A link whose target is
+   gone points at nothing, so it is only removed:
+
+   ```bash
+   while IFS=$'\t' read -r link target; do
+     rm "$link"
+     if [ -e "$target" ]; then mv "$target" "$link"; fi
+   done < ~/files-links.tsv
+   ```
+
+5. Check what is left in the clone that git does not have, since deleting the
+   clone loses it. The moved files show as deleted, which is expected. Move
+   anything you want to keep out of the clone first; caches and old logs can go.
+
+   ```bash
+   git -C ~/.files status --short --ignored --untracked-files=all | grep -E '^(\?\?|!!)'
+   git -C ~/.files stash list
+   git -C ~/.files log --branches --not --remotes --oneline
+   ```
+
+6. Delete the clone (`rm -rf ~/.files`) and `~/files-links.tsv`.
+7. `krypt init https://github.com/mxaddict/dotfiles` if krypt has no repo yet,
+   then `krypt update`. It replaces the old `.update` chain and reloads Hyprland
+   if it is running.
+8. `krypt diff` lists anything still out of step with the repo.
+
+Your machine's own files, the `[[template]]` destinations such as
+`~/.gitconfig.local` and `~/.config/hypr/monitors.lua`, differ from the repo on
+purpose: krypt leaves them alone and counts them in "conflicts skipped". The old
+`~/.config/hypr/{apps,input,monitors}.conf` are not read any more, since
+`hyprland.lua` loads `apps.lua`, `input.lua` and `monitors.lua` instead; move
+your settings across before deleting them.
+
+Bash scripts in `.local/bin/.*` (e.g. `.menu-power`, `.kanata`) **stay on disk**
+— krypt invokes them via `[[command]]` entries. They get full `shellcheck` +
+`ft=bash` treatment instead of being inlined into TOML strings.
 
 The Hyprland keybinds in `hyprland.lua` now invoke `krypt menu <name>` instead
 of the scripts directly. Same for waybar `on-click` handlers.
