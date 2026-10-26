@@ -169,33 +169,33 @@ lyr replaced waybar and swaync on 2026-10-26: Hyprland starts it, and the
 notification, Wi-Fi, audio and Bluetooth binds and the `krypt menu` commands run
 `lyr` subcommands.
 
-- **waybar and swaync are still deployed as a fallback**, by the owner's choice:
-  `.config/waybar/`, `.config/swaync/`, their `src_glob` links and the `waybar`
-  and `swaync` pacman packages stay, and so does `.local/bin/.swaync-test`
-  (which now only fires test notifications, at whichever daemon is running).
-  lyr's plan (`docs/plan/05-layout-and-config.md` in kryptic-sh/lyr) removes
-  both once lyr has run as the daily bar for a while. Retiring them means
-  deleting the two config directories and their `[[link]]` entries, the two
-  packages, and the fallback line under "Bar" in the README; `krypt update` then
-  forgets the deployed copies (krypt 0.4.4 deletes the unedited ones), and the
-  packages need a manual `pacman -Rns`, since `krypt deps` only installs. Needs
-  the owner's call on when.
+- **waybar and swaync are still deployed as a fallback**, by the owner's choice,
+  though not installed everywhere: on `slowassdell` both packages were removed
+  with `paru -Rns` on 2026-10-26, and their configs are still deployed there. In
+  the repo `.config/waybar/`, `.config/swaync/`, their `src_glob` links and the
+  `waybar` and `swaync` pacman packages stay, and so does
+  `.local/bin/.swaync-test` (which now only fires test notifications, at
+  whichever daemon is running). lyr's plan (`docs/plan/05-layout-and-config.md`
+  in kryptic-sh/lyr) removes both once lyr has run as the daily bar for a while.
+  Retiring them means deleting the two config directories and their `[[link]]`
+  entries, the two packages, and the fallback line under "Bar" in the README;
+  `krypt update` then forgets the deployed copies (krypt 0.4.4 deletes the
+  unedited ones), and the packages need a manual `pacman -Rns`, since
+  `krypt deps` only installs. Needs the owner's call on when.
 - **swaync takes the notification name back if lyr is not running.** The swaync
   package ships a D-Bus activation file
   (`/usr/share/dbus-1/services/org.erikreider.swaync.service`), so the first
   notification sent while nothing owns `org.freedesktop.Notifications` starts
   swaync. lyr claims the name only when it starts, so restarting lyr afterwards
   does not make it the daemon until swaync is stopped first. Goes away with the
-  swaync package.
-- **Nothing starts lyr on macOS or Windows.** The `kryptic` group installs it
-  there (`kryptic-sh/tap/lyr`, `kryptic-sh/lyr`), but only `hyprland.lua` runs
-  it. Options: a launchd agent and a Startup-folder shortcut (or scheduled
-  task), each deployed by a `[[link]]`; or drop lyr from the brew and scoop
-  lists until it is wanted there. Needs a decision.
-- **No apt or dnf install.** `lyr-bin` is on crates.io (0.1.0, published
-  2026-10-26), but the apt and dnf lists have no `cargo:lyr-bin`, unlike the
-  other kryptic-sh tools with a crate. Not added, because those machines may
-  have no Wayland session to run a bar in. Needs a decision.
+  swaync package, as it has on `slowassdell`.
+- **lyr is off by default on macOS and Windows**, by the owner's choice on
+  2026-10-26: the `kryptic` group installs it there (`kryptic-sh/tap/lyr`,
+  `kryptic-sh/lyr`), but nothing starts it, since only `hyprland.lua` runs it.
+  Turning it on later would take a launchd agent on macOS (plus, under
+  AeroSpace, an `exec-and-forget lyr event workspace` callback, as `lyr --help`
+  describes) and a Startup-folder shortcut or scheduled task on Windows, each
+  deployed by a `[[link]]`.
 - **Existing `apps.lua` files keep `notify = "swaync-client"`.** It was dropped
   from `apps.template.lua`, but `krypt setup` renders that template once, so
   machines set up before keep the line. Nothing reads it any more; delete it by

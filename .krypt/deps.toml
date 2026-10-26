@@ -149,8 +149,14 @@ pacman = [
     "buffr-bin", "gemini-cli", "gpur-bin", "hjkl-bin", "hodl-bin", "hrdr-bin",
     "inbx-bin", "krypt-bin", "lyr-bin", "pikr-bin", "sqeel-bin", "tmxr-bin",
 ]
-apt = ["cargo:gpur", "cargo:hjkl", "cargo:hrdr", "cargo:sqeel", "cargo:tmxr-cli"]
-dnf = ["cargo:gpur", "cargo:hjkl", "cargo:hrdr", "cargo:sqeel", "cargo:tmxr-cli"]
+apt = [
+    "cargo:gpur", "cargo:hjkl", "cargo:hrdr", "cargo:lyr-bin", "cargo:sqeel",
+    "cargo:tmxr-cli",
+]
+dnf = [
+    "cargo:gpur", "cargo:hjkl", "cargo:hrdr", "cargo:lyr-bin", "cargo:sqeel",
+    "cargo:tmxr-cli",
+]
 brew = [
     "gemini-cli", "kryptic-sh/tap/buffr", "kryptic-sh/tap/gpur",
     "kryptic-sh/tap/hjkl", "kryptic-sh/tap/hodl", "kryptic-sh/tap/hrdr",
