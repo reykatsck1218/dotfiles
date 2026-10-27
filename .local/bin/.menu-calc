@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# vi: ft=bash
+
+pikr_kill() {
+    pkill pikr
+}
+
+pikr_kill && exit 0
+
+history="$HOME/.local/share/qalc.history"
+if [ ! -f "$history" ]; then
+    touch "$history"
+fi
+
+qalc -e "1 BTC" &
+
+regex='[=≈]\s*\K.*'
+answer_raw=""
+while :; do
+    pikr_result=$(tac "$history" | head -5000 | pikr -d -p Calc)
+
+    exit_code=$?
+
+    if test "$exit_code" = "1"; then
+        exit 0
+    fi
+
+    if [[ "$pikr_result" =~ .*[=≈].* ]]; then
+        echo "$pikr_result" | grep -oP "$regex" | wl-copy
+        exit 0
+    else
+        answer_raw=$(qalc "$pikr_result")
+        echo "$answer_raw" | grep -oP "$regex" | wl-copy
+        echo "$answer_raw" >>"$history"
+    fi
+done

@@ -7,6 +7,9 @@ add_newline = false
 # Update the format
 format = '$all'
 
+[[battery.display]]
+threshold = 30
+
 [username]
 disabled = false
 show_always = true
@@ -14,11 +17,14 @@ format = '[$user]($style)@'
 
 [hostname]
 disabled = false
-ssh_only = false
 format = '[$hostname](bold red):'
+ssh_only = false
+trim_at = ""
 
 [directory]
 truncate_to_repo = true
+# `/` on Windows too, as on Linux and macOS.
+use_os_path_sep = false
 
 [git_branch]
 symbol = ' '
@@ -38,7 +44,13 @@ stashed = '[\$${count}](yellow)'
 untracked = '[?${count}](red)'
 up_to_date = ''
 
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
 [c]
 symbol = ' '
 detect_files = ['autogen.sh', 'configure', 'configure.ac']
-commands = [ [ 'clang', '--version' ], [ 'gcc', '--version' ], [ 'cc', '--version' ] ]
+commands = [['clang', '--version'], ['gcc', '--version']]

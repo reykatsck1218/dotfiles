@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-rm -rf ~/.cache
-sudo rm -rf /var/cache

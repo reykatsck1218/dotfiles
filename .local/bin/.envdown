@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# vi: ft=bash
+
+bucket=${BUCKET-"env-pmi"}
+project=$(basename "$(pwd)")
+envs="dev stage main"
+for env in $envs; do
+    gcloud storage cp "gs://${bucket}/${project}/.env.${env}" . &
+    gcloud storage cp "gs://${bucket}/${project}/.env.gs.${env}.json" . &
+done
+
+wait

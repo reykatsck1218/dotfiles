@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# vi: ft=bash
+
+pkill pikr && exit
+
+timezone=$(sudo timedatectl list-timezones | pikr -d -p "Time Zone")
+
+if [[ $timezone != "" ]]; then
+    sudo timedatectl set-timezone "$timezone"
+    echo "Picked $timezone"
+fi

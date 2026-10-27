@@ -1,30 +1,41 @@
 #!/usr/bin/env fish
+# vi: ft=fish
 # No greeting text for now
 set fish_greeting
 
 # Set some stuff for out path
-fish_add_path -g ~/.cargo/bin
-fish_add_path -g ~/.files/bin
-fish_add_path -g ~/.local/bin
-fish_add_path -g ~/.config/composer/vendor/bin
 fish_add_path -g /opt/homebrew/bin
-fish_add_path -g /opt/homebrew/opt/m4/bin
 fish_add_path -g /opt/homebrew/opt/llvm/bin
+fish_add_path -g /opt/homebrew/opt/m4/bin
+fish_add_path -g ~.foundry/bin
+fish_add_path -g ~/.cargo/bin
+fish_add_path -g ~/.config/composer/vendor/bin
+fish_add_path -g ~/.dotnet/tools
+fish_add_path -g ~/.local/bin
+fish_add_path -g ~/.local/share/nvim/mason/bin
+fish_add_path -g ~/.opencode/bin
 
 # Set default editor to vim
-set -gx EDITOR nvim
+set -gx EDITOR hjkl
 
 # Disable MANGOHUD by default
 set -gx MANGOHUD 0
 
+# Add support for pin entry via ssh
+set -gx GPG_TTY "$(tty)"
+
+# Disable php_cs_fixer Check
+set -gx PHP_CS_FIXER_IGNORE_ENV 1
+
 # Set JOSBS
-set -gx JOBS "$(nproc)"
+set -gx JOBS "$(.nproc)"
 
 # Add makeflags
 set -gx MAKEFLAGS "-j$JOBS"
 
 # Set paru pager
 set -gx PARU_PAGER "bat --color=always"
+set -gx MANPAGER "bat -p -lman"
 
 alias code /usr/local/bin/code
 
@@ -32,7 +43,6 @@ alias code /usr/local/bin/code
 set -gx FZF_CTRL_T_OPTS "--preview 'bat -n --color=always {}'"
 set -gx FZF_DEFAULT_OPTS "$FZF_DEFAULT_OPTS \
     --height 100%
-    --highlight-line \
     --info=inline-right \
     --ansi \
     --layout=reverse \
@@ -72,25 +82,53 @@ alias ssh-reelbot-user "ssh reelbot@143.244.178.224"
 
 
 # Check for batcat
-if command -v batcat >/dev/null
-    alias bat batcat
+if command -v -q batcat
+    function bat
+        batcat $argv
+    end
 end
 
 # Check for exa and alias to eza
-if command -v exa >/dev/null
-    alias eza exa
+if not command -v -q eza
+    function eza
+        exa $argv
+    end
 end
 
-# Replace cat with batcat
-alias cat "bat --plain"
-alias less cat
+# Replace cat with bat
+function cat
+    bat --plain $argv
+end
 
-# Alias for cmatrix
-alias c cmatrix
+# Hrdr default: skip perms
+function hrdr
+    command hrdr --yolo $argv
+end
 
-# Replace diff command with a more usefull git command
-function diff
-    git diff --name-only --relative --diff-filter=d | xargs bat --diff
+# Codex default: skip approvals and sandbox
+function codex
+    command codex --dangerously-bypass-approvals-and-sandbox $argv
+end
+
+# Claude default: skip perms
+function claude
+    command claude --dangerously-skip-permissions --remote-control $argv
+end
+
+# Claude continue alias
+function c
+    claude --continue $argv || claude
+end
+
+# Claude work account (separate config dir)
+function cw
+    set -lx CLAUDE_CONFIG_DIR $HOME/.claude-work
+    claude --continue $argv || claude
+end
+
+# Opencode continue alias
+function o
+    opencode --continue $argv || opencode
 end
 
 # Git typo
@@ -100,60 +138,158 @@ function got
 end
 
 # More git
-alias gti got
-alias gto got
-alias tgi got
-alias gut got
-alias fur got
-alias hot got
-
-# fastfetch
-alias f fastfetch
-alias ff fastfetch
-
-# Alias for lazygit
-alias lg lazygit
-
-# Replace man with command for colorfull man calls
-function man
-    /usr/bin/man $argv | bat --plain --language=man
+function gti
+    got $argv
+end
+function gto
+    got $argv
+end
+function tgi
+    got $argv
+end
+function gut
+    got $argv
+end
+function fur
+    got $argv
+end
+function hot
+    got $argv
 end
 
-# Replace fish help with command for colorfull help calls
-function help
-    $argv --help 2>&1 | bat --plain --language=help
+# fastfetch
+function ff
+    clear
+    fastfetch $argv
+end
+
+# Alias for lazygit
+function lg
+    lazygit $argv
 end
 
 # Alias for quick and dirty git commit
-alias g 'git commit -am "$(quoty)"; git pull; git push'
-alias gg 'git add . && git commit -m "$(quoty)"; git pull; git push'
+function gg
+    set -l msg (quoty)
+
+    if test -n "$msg"
+        git add .
+        git commit -m "$msg"
+    else
+        echo "Error: Could'nt get quote from quoty"
+        return 1
+    end
+    git pull --rebase
+    git push
+end
+function gl
+    set -l loc (curl -s https://ipinfo.io/loc)
+
+    if test -n "$loc"
+        git add .
+        git commit -m "$loc"
+    else
+        echo "Error: Could'nt get location"
+        return 1
+    end
+    git pull --rebase
+    git push
+end
 
 # Alias for kweri
-alias q kweri
+function q
+    kweri $argv
+end
+
+# Alias for hjkl
+function h
+    hjkl $argv
+end
+function hj
+    hjkl $argv
+end
+function hjk
+    hjkl $argv
+end
+
+# Alias for sqeel
+function s
+    sqeel $argv
+end
+function sq
+    sqeel $argv
+end
+function sql
+    sqeel $argv
+end
+
+# Alias for tmxr
+function t
+    tmxr $argv
+end
 
 # Add navcoin alias
-alias nav navcoin-cli
+function nav
+    navcoin-cli $argv
+end
 
 # Replace default ls command with eza
-alias ls "eza --group-directories-first"
+function ls
+    eza --group-directories-first $argv
+end
 
 # Replace tree command with eza
-alias tree "eza --tree"
+function tree
+    eza --tree -- $argv
+end
 
 # Some more ls
-alias l "ls -lF"
-alias la "ls -aF"
-alias ll "ls -alF"
+function l
+    ls -lF -- $argv
+end
+function la
+    ls -aF -- $argv
+end
+function ll
+    ls -alF -- $argv
+end
 
 # Clear alias
-alias cl clear
+function cl
+    clear
+end
+
+# Alias for :q to exit terminal
+function :q
+    exit
+end
+
+# NVM
+if command -v -q fnm
+    function nvm
+        fnm $argv
+    end
+end
 
 # I want v to open vi and vi to open vim
-alias v nvim
-alias vi nvim
-alias vim nvim
-alias vd "nvim -d"
-alias vimdiff "nvim -d"
+function n
+    hjkl $argv
+end
+function nv
+    hjkl $argv
+end
+function nvi
+    hjkl $argv
+end
+function v
+    hjkl $argv
+end
+function vi
+    hjkl $argv
+end
+function vim
+    hjkl $argv
+end
 
 # TokyoNight Color Palette
 set -l foreground c0caf5
@@ -197,34 +333,28 @@ fish_vi_key_bindings
 # Load fzf
 type -q fzf_key_bindings && fzf_key_bindings
 
-# Disable ctrl-d for fish quit/exit
-bind --mode insert \cd false
-bind --mode default \cd false
-
 # FZF binds
 type -q fzf_configure_bindings && fzf_configure_bindings \
-    --directory=\cd \
+    --directory=\cf \
     --git_log=\cg \
     --git_status=\cs \
     --variables=\cv \
     --processes=\cp
 
 # Load zoxide
-if command -v zoxide >/dev/null
+if command -v -q zoxide
     zoxide init fish --cmd cd | source
 end
 
-# Check for nproc
-if command -v nproc >/dev/null
-    alias nproc "sysctl -n hw.physicalcpu"
-end
-
 # Load starship prompt
-if command -v starship >/dev/null
+if command -v -q starship
     starship init fish | source
 end
 
-# Load the fuck
-if command -v thefuck >/dev/null
-    thefuck --alias | source
+# FNM setup env
+if command -v -q fnm
+    fnm env --shell fish | source
 end
+
+# Cap cargo at half the system threads to keep desktop responsive
+set -gx CARGO_BUILD_JOBS (math (.nproc) / 2)

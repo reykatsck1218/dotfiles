@@ -1,0 +1,51 @@
+model = "gpt-5.6-sol"
+model_reasoning_effort = "medium"
+# Ollama profile — change base_url to point at your Ollama host.
+# Default assumes Ollama running on localhost:11434. For a remote box, set
+# something like "http://your-host.lan:11434/v1/".
+[profiles.ollama-launch]
+openai_base_url = "http://localhost:11434/v1/"
+forced_login_method = "api"
+model_provider = "ollama-launch"
+
+[model_providers.ollama-launch]
+name = "Ollama"
+base_url = "http://localhost:11434/v1/"
+
+[tui]
+animations = false
+theme = "nord"
+status_line = ["model-with-reasoning", "current-dir", "thread-name", "weekly-limit"]
+status_line_use_colors = true
+
+[tui.model_availability_nux]
+"gpt-5.6-sol" = 1
+gpt-6-astra = 4
+
+[projects."/home/mxaddict/Projects/kryptic-sh"]
+trust_level = "trusted"
+
+[projects."/home/mxaddict"]
+trust_level = "trusted"
+
+[projects."/home/mxaddict/Projects/kryptic-sh/hrdr"]
+trust_level = "trusted"
+
+[projects."/home/mxaddict/Projects/kryptic-sh/crcbl"]
+trust_level = "trusted"
+
+[projects."/home/mxaddict/Projects/exfilgames/ew"]
+trust_level = "trusted"
+
+[projects."/home/mxaddict/Projects/mxaddict/navio-core"]
+trust_level = "trusted"
+
+[notice]
+hide_rate_limit_model_nudge = true
+
+[mcp_servers.blender]
+command = "uvx"
+args = ["blender-mcp==1.9.1"]
+
+[mcp_servers.blender.env]
+DISABLE_TELEMETRY = "true"

@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Newline-separated "id<TAB>name" records rather than associative arrays:
+# macOS ships bash 3.2, which has no `declare -A`.
+
+PAGE=1
+PER_PAGE=100
+
+PROJECTS="" # "pid<TAB>name" per line
+KEYS=""     # "pid<TAB>kid<TAB>title" per line
+
+echo "=== Fetching all projects ==="
+
+while true; do
+  response=$(glab api "projects?membership=true&per_page=$PER_PAGE&page=$PAGE" | jq -r '.[] | "\(.id)\t\(.name_with_namespace)"')
+
+  [[ -z "$response" ]] && break
+
+  while IFS=$'\t' read -r pid pname; do
+    PROJECTS+="$pid"$'\t'"$pname"$'\n'
+    echo "  [$pid] $pname"
+  done <<< "$response"
+
+  sleep 1
+  PAGE=$((PAGE + 1))
+done
+
+echo ""
+echo "Total projects: $(printf '%s' "$PROJECTS" | grep -c . || true)"
+echo ""
+echo "=== Fetching deploy keys ==="
+
+while IFS=$'\t' read -r pid pname; do
+  [[ -z "$pid" ]] && continue
+  keys=$(glab api "projects/$pid/deploy_keys" | jq -r '.[] | "\(.id)\t\(.title)"')
+
+  while IFS=$'\t' read -r kid ktitle; do
+    [[ -z "$kid" ]] && continue
+    KEYS+="$pid"$'\t'"$kid"$'\t'"$ktitle"$'\n'
+    echo "  Project [$pid] $pname — Key [$kid] $ktitle"
+  done <<< "$keys"
+  sleep 1
+done <<< "$PROJECTS"
+
+echo ""
+echo "Total keys to delete: $(printf '%s' "$KEYS" | grep -c . || true)"
+echo ""
+read -rp "Delete all? [y/N] " confirm
+[[ "$confirm" != "y" && "$confirm" != "Y" ]] && echo "Aborted." && exit 0
+
+echo ""
+echo "=== Deleting ==="
+
+while IFS=$'\t' read -r pid kid title; do
+  [[ -z "$pid" ]] && continue
+  glab api --method DELETE "projects/$pid/deploy_keys/$kid"
+  echo "Deleted key [$kid] $title from project $pid"
+  sleep 1
+done <<< "$KEYS"
+
+echo "Done."
