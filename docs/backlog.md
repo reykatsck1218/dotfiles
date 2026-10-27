@@ -44,13 +44,6 @@
 
 ## Windows machine state
 
-- **Windows Terminal's deployed `settings.json` has drifted from the repo.**
-  Terminal writes the file itself: on the Windows machine (2026-10-27) it holds
-  a generated `Ubuntu-26.04` WSL profile, `useAcrylicInTabRow: false` and a
-  reordered `actions` entry the repo copy lacks, so `krypt update` skips it as a
-  conflict and exits 1. Options: `krypt adopt` the deployed file into the repo,
-  or `krypt link --force` to drop the local changes (Terminal regenerates the
-  WSL profile, the acrylic setting would be lost). Needs a decision.
 - **The stable Rust toolchain was found half-installed.** On 2026-10-27 its
   `bin` held only `cargo` and `clippy`, and `lib/rustlib/components` lacked
   `rustc`, the host `rust-std`, `rustfmt` and `rust-docs`, so rustup's proxies
