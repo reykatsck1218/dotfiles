@@ -44,11 +44,19 @@
 
 ## Windows machine state
 
-- **`krypt diff` still lists a removed link.** Dropping the Windows mpv
-  `[[link]]` left `%APPDATA%\mpv\mpv.conf` in krypt's manifest, so it shows as
-  `missing` after the file was deleted. krypt 0.4.4's `link` (and so `update`)
-  forgets manifest entries the config no longer deploys, which drops it; not yet
-  run on the Windows machine, which needs 0.4.4 and one `krypt update`.
+- **Windows Terminal's deployed `settings.json` has drifted from the repo.**
+  Terminal writes the file itself: on the Windows machine (2026-10-27) it holds
+  a generated `Ubuntu-26.04` WSL profile, `useAcrylicInTabRow: false` and a
+  reordered `actions` entry the repo copy lacks, so `krypt update` skips it as a
+  conflict and exits 1. Options: `krypt adopt` the deployed file into the repo,
+  or `krypt link --force` to drop the local changes (Terminal regenerates the
+  WSL profile, the acrylic setting would be lost). Needs a decision.
+- **The stable Rust toolchain was found half-installed.** On 2026-10-27 its
+  `bin` held only `cargo` and `clippy`, and `lib/rustlib/components` lacked
+  `rustc`, the host `rust-std`, `rustfmt` and `rust-docs`, so rustup's proxies
+  refused every cargo command and the `cargo-install-*` hooks failed (ignored).
+  `rustup update stable --force` repaired it. Cause unknown; an interrupted
+  update is a guess. If it recurs, suspect whatever last touched the toolchain.
 - **Machines set up with winget keep those installs.** The Windows groups moved
   from winget to scoop, and nothing uninstalls the winget copies, so a machine
   that ran the old `krypt deps` has both (e.g. `Git.Git` under `Program Files`
