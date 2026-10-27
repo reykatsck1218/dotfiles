@@ -1,9 +1,16 @@
 [user]
-	name = mxaddict
-	email = mxaddict@kryptic.sh
+	name = Rey Ebesa
+	email = rey.ebesa@everymatrix.com
+	signingkey = rey.ebesa@everymatrix.com
 [color]
 	ui = true
 [core]
 	excludesfile = ~/.gitignore
 [pull]
 	rebase = false
+[commit]
+	gpgsign = true
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true

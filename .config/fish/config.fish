@@ -26,6 +26,8 @@ set -gx MAKEFLAGS "-j$JOBS"
 # Set paru pager
 set -gx PARU_PAGER "bat --color=always"
 
+alias code /usr/local/bin/code
+
 # FZF theme
 set -gx FZF_CTRL_T_OPTS "--preview 'bat -n --color=always {}'"
 set -gx FZF_DEFAULT_OPTS "$FZF_DEFAULT_OPTS \
@@ -62,7 +64,12 @@ alias ssh-devdeep "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-u
 alias ssh-devdeep "ssh -i ~/Documents/projects/deepci/deepci-main-2024.pem ec2-user@100.20.225.140"
 alias ssh-rankdb "ssh -i ~/Documents/projects/deepci/deepci-scraper-kp.pem ubuntu@44.232.201.204"
 alias ssh-google-hetzner "ssh root@google-scraper.hetzner.deepci.com"
-alias ssh-lumen-hetzner "ssh root@rey-scraper.hetzner.deepci.com"
+alias ssh-lumen-hetzner "ssh root@lumen.hetzner.deepci.com"
+alias ssh-rey-scraper-neo "ssh root@rey-scraper.hetzner.deepci.com"
+alias ssh-reelbot-root "ssh root@143.244.178.224"
+alias ssh-reelbot-user "ssh reelbot@143.244.178.224"
+
+
 
 # Check for batcat
 if command -v batcat >/dev/null
