@@ -44,12 +44,6 @@
 
 ## Windows machine state
 
-- **The stable Rust toolchain was found half-installed.** On 2026-10-27 its
-  `bin` held only `cargo` and `clippy`, and `lib/rustlib/components` lacked
-  `rustc`, the host `rust-std`, `rustfmt` and `rust-docs`, so rustup's proxies
-  refused every cargo command and the `cargo-install-*` hooks failed (ignored).
-  `rustup update stable --force` repaired it. Cause unknown; an interrupted
-  update is a guess. If it recurs, suspect whatever last touched the toolchain.
 - **Machines set up with winget keep those installs.** The Windows groups moved
   from winget to scoop, and nothing uninstalls the winget copies, so a machine
   that ran the old `krypt deps` has both (e.g. `Git.Git` under `Program Files`
